@@ -1,0 +1,229 @@
+function scaleRowAdd(sizeOfMatrix, rowAddTo, rowAddFrom, scalingFactor){
+    let result = [];
+    for(let i = 0; i<sizeOfMatrix; i++){
+        result[i] = [];
+        for(let j = 0; j<sizeOfMatrix; j++){
+        if(i==j){
+            result[i][j] = 1;
+        }else{
+            result[i][j] = 0;
+        }
+    }
+    }
+    result[rowAddTo][rowAddFrom] = scalingFactor;
+    return result;
+}
+
+function scaleRow(sizeOfMatrix, rowNumber, scalingFactor){
+    let result = [];
+    for(let i = 0; i<sizeOfMatrix; i++){
+        result[i] = [];
+        for(let j = 0; j<sizeOfMatrix; j++){
+        if(i==j){
+            result[i][j] = 1;
+        }else{
+            result[i][j] = 0;
+        }
+    }
+    }
+    result[rowNumber][rowNumber] = scalingFactor;
+    return result;
+}
+
+function switchRows(a,b, sizeOfMatrix){
+    let result = [];
+    for(let i = 0; i<sizeOfMatrix; i++){
+        result[i] = [];
+        for(let j = 0; j<sizeOfMatrix; j++){
+        if(i==j){
+            result[i][j] = 1;
+        }else{
+            result[i][j] = 0;
+        }
+    }
+    }
+    let ba = result[a];
+    let ca = result[b];
+    result[a] = ca;
+    result[b] = ba;
+    return result;
+}
+
+function multiply(ab, b){
+    let res = [];
+    let sum = 0;
+    let l = ab.length;
+    for(let i = 0; i<l; i++){
+        res[i] = [];
+        for(let j = 0; j<l; j++){
+            sum = 0;
+            for(let k = 0; k<l; k++){
+                sum += ab[i][k]*b[k][j];
+            }
+            res[i][j] = sum;
+        }
+    }
+    return res;
+}
+
+function randomArray(n, r){
+    let res = [];
+    for(let i = 0; i<n; i++){
+        res[i] = [];
+        for(let k = 0; k<n; k++){
+            res[i][k] = (Math.round(1000*(r - 2*r*Math.random())))/1000;
+        }
+    }
+    return res;
+}
+
+function power(b,e){
+    let res = 1;
+    for(let i = 0; i<e; i++){
+        res *=b;
+    }
+    return res;
+}
+
+function newMatrix(column, matrix){
+    let len = matrix.length;
+    let remcol = [];
+    for(let i = 0; i<len-1; i++){
+        remcol[i] = [];
+        for(let j = 0; j<len; j++){
+            remcol[i][j] = matrix[i+1][j];
+        }
+    }
+    let res = [];
+    let h = 0;
+    for(let i = 0; i<len-1; i++){
+        res[i] = [];
+        for(let j = 0; j<column; j++){
+            h = j;
+            res[i][h] = remcol[i][j];
+        }
+    }
+    for(let i = 0; i<len-1; i++){
+        for(let j = column+1; j<len; j++){
+            h = j-1;
+            res[i][h] = remcol[i][j];
+        }
+    }
+    return res;
+}
+
+function determinant(matrix){
+    if(matrix.length == 1){
+        return matrix[0][0];
+    }else{
+        let len = matrix.length;
+        let res = 0;
+        for(let i = 0; i<len; i++){
+            res += power(-1, i)*matrix[0][i]*determinant(newMatrix(i, matrix));
+        }
+        return res;
+    }
+}
+
+function excMatrix(matrix, row, col){
+    let len = matrix.length;
+    let remcol = [];
+    let g = 0;
+    for(let i = 0; i<row; i++){
+        g = i;
+        remcol[g] = [];
+        for(let j = 0; j<len; j++){
+            remcol[g][j] = matrix[i][j];
+        }
+    }
+    for(let i = row+1; i<len; i++){
+        g = i-1;
+        remcol[g] = [];
+        for(let j = 0; j<len; j++){
+            remcol[g][j] = matrix[i][j];
+        }
+    }
+    let res = [];
+    let h = 0;
+    for(let i = 0; i<len-1; i++){
+        res[i] = [];
+        for(let j = 0; j<col; j++){
+            h = j;
+            res[i][h] = remcol[i][j];
+        }
+    }
+    for(let i = 0; i<len-1; i++){
+        for(let j = col+1; j<len; j++){
+            h = j-1;
+            res[i][h] = remcol[i][j];
+        }
+    }
+    return res;
+}
+
+function inverseMatrix(matrix){
+    let l = matrix.length;
+    let resi = [];
+    for(let i = 0; i<l; i++){
+        resi[i] = [];
+        for(let j = 0; j<l; j++){
+            resi[i][j] = (1/determinant(matrix))*determinant(excMatrix(matrix, j, i))*power(-1, (i+j));
+        }
+    }
+    return resi;
+}
+
+function invertAMatrix(matrix){
+let le = matrix.length;
+let res = matrix;
+let ores = [];
+for(let i = 0; i<le; i++){
+if(res[i][i] != 0){
+    ores.push(scaleRow(le, i, 1/res[i][i]));
+    res = multiply(scaleRow(le, i, 1/res[i][i]), res);
+    res[i][i] = 1;
+    for(let j = 0; j<le; j++){
+        if(j != i){
+            ores.push(scaleRowAdd(le, j, i, -1*res[j][i]));
+            res = multiply(scaleRowAdd(le, j, i, -1*res[j][i]), res);
+        }
+    }
+}else{
+    for(let k = i; k<le; k++){
+        if(res[k][i] != 0){
+            ores.push(switchRows(k,i,le));
+            res = multiply(switchRows(k,i,le), res);
+            k = le+1;
+        }
+    }
+    ores.push(scaleRow(le, i, 1/res[i][i]));
+    res = multiply(scaleRow(le, i, 1/res[i][i]), res);
+    res[i][i] = 1;
+    for(let j = 0; j<le; j++){
+        if(j != i){
+            ores.push(scaleRowAdd(le, j, i, -1*res[j][i]));
+            res = multiply(scaleRowAdd(le, j, i, -1*res[j][i]), res);
+        }
+    }
+}
+
+
+
+
+
+
+
+    
+}
+
+ores.push(res);
+
+
+return ores;
+
+
+
+
+
+    
+}
