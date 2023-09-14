@@ -227,3 +227,11 @@ return ores;
 
     
 }
+
+function inversec(matrix){
+    let m= invertAMatrix(matrix)[0];
+    for(let i = 0; i<invertAMatrix(matrix).length-3; i++){
+    m = multiply(invertAMatrix(matrix)[i+1], m);
+}
+    return m;
+}
