@@ -235,3 +235,18 @@ function inversec(matrix){
 }
     return m;
 }
+
+function makeRow(row){
+    let str = `[${row[0]}`;
+    for(let i = 1; i<row.length; i++){
+        str = `${str}, ${row[i]}`;
+    }
+    return `${str}]`;
+}
+function writeWRA(matrix){
+    let str = `(${makeRow(matrix[0])}`;
+    for(let i = 1; i<matrix.length; i++){
+        str += `, ${makeRow(matrix[i])}`;
+    }
+    return `${str})`;
+}
