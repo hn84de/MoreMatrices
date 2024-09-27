@@ -12,6 +12,7 @@ function scaleRowAdd(sizeOfMatrix, rowAddTo, rowAddFrom, scalingFactor){
     }
     result[rowAddTo][rowAddFrom] = scalingFactor;
     return result;
+    
 }
 
 function scaleRow(sizeOfMatrix, rowNumber, scalingFactor){
